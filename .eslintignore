@@ -1,0 +1,7 @@
+# Arquivos ignorados pelo ESLint em produção
+node_modules
+.next
+out
+build
+dist
+public
