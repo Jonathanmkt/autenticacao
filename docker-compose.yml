@@ -1,0 +1,32 @@
+version: '3'
+services:
+  autenticacao:
+    image: ghcr.io/jonathanmkt/autenticacao:latest
+    networks:
+      - Singanet
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+      labels:
+      - traefik.enable=1
+      - traefik.http.routers.autenticacao.rule=Host(`autenticacao.singaerj.org.br`)
+      - traefik.http.routers.autenticacao.entrypoints=websecure
+      - traefik.http.routers.autenticacao.priority=1
+      - traefik.http.routers.autenticacao.tls.certresolver=letsencryptresolver
+      - traefik.http.routers.autenticacao.service=autenticacao
+      - traefik.http.services.autenticacao.loadbalancer.server.port=3000
+      - traefik.http.services.autenticacao.loadbalancer.passHostHeader=true
+      placement:
+        constraints:
+          - node.role == manager
+    environment:
+      - NEXT_PUBLIC_SITE_URL=https://autenticacao.singaerj.org.br
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+
+networks:
+  Singanet:
+    external: true
